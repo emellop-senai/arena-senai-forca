@@ -1,46 +1,43 @@
+// supabase
 const express = require('express');
-const mysql = require('mysql2/promise');
+const { Pool } = require('pg'); // Alterado para pg
 const cors = require('cors');
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
 
-dotenv.config()
+dotenv.config();
 
 const app = express();
-app.use(cors({
-    origin: '*', // Permite qualquer origem
-    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Permite estes métodos HTTP
-    allowedHeaders: ['Content-Type', 'Authorization'] // Permite estes cabeçalhos
-}));
+app.use(cors());
 app.use(express.json());
 
-// Configuração da conexão com o banco de dados
-// Lembre-se de colocar a sua senha real do MySQL aqui
-const pool = mysql.createPool({
-    host: process.env.DB_HOST,
-    user: process.env.USER_DB,
-    password: process.env.PASSWORD_DB,
-    database: process.env.DATABASE
+// Configuração da conexão com o Supabase (PostgreSQL)
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL, // Use a Connection String do Supabase
+    ssl: {
+        rejectUnauthorized: false // Necessário para conexões externas com o Supabase
+    }
 });
 
 // ==========================================
 // ROTAS DA API
 // ==========================================
 
-// 1. Rota de Login (Busca ou cria o usuário)
+// 1. Rota de Login
 app.post('/api/login', async (req, res) => {
     try {
         const { username } = req.body;
 
-        // Verifica se o usuário já existe
-        const [users] = await pool.query('SELECT * FROM usuarios WHERE username = ?', [username]);
+        const users = await pool.query('SELECT * FROM usuarios WHERE username = $1', [username]);
 
-        if (users.length > 0) {
-            // Usuário existe, retorna os dados dele
-            res.json(users[0]);
+        if (users.rows.length > 0) {
+            res.json(users.rows[0]);
         } else {
-            // Usuário novo, insere no banco
-            const [result] = await pool.query('INSERT INTO usuarios (username, score) VALUES (?, 0)', [username]);
-            res.json({ id: result.insertId, username, score: 0 });
+            // No Postgres usamos RETURNING id para obter o ID inserido
+            const result = await pool.query(
+                'INSERT INTO usuarios (username, score) VALUES ($1, 0) RETURNING id', 
+                [username]
+            );
+            res.json({ id: result.rows[0].id, username, score: 0 });
         }
     } catch (error) {
         console.error(error);
@@ -51,13 +48,13 @@ app.post('/api/login', async (req, res) => {
 // 2. Rota para sortear uma palavra aleatória
 app.get('/api/palavras/aleatoria', async (req, res) => {
     try {
-        // O ORDER BY RAND() pega uma linha aleatória do banco
-        const [palavras] = await pool.query('SELECT * FROM palavras ORDER BY RAND() LIMIT 1');
+        // No Postgres é RANDOM() e não RAND()
+        const palavras = await pool.query('SELECT * FROM palavras ORDER BY RANDOM() LIMIT 1');
 
-        if (palavras.length > 0) {
-            res.json(palavras[0]);
+        if (palavras.rows.length > 0) {
+            res.json(palavras.rows[0]);
         } else {
-            res.status(404).json({ error: 'Nenhuma palavra encontrada no banco.' });
+            res.status(404).json({ error: 'Nenhuma palavra encontrada.' });
         }
     } catch (error) {
         console.error(error);
@@ -65,20 +62,18 @@ app.get('/api/palavras/aleatoria', async (req, res) => {
     }
 });
 
-// 3. Rota para salvar o resultado da partida e atualizar a pontuação
+// 3. Rota para salvar partida
 app.post('/api/partidas', async (req, res) => {
     try {
         const { usuario_id, palavra_id, pontos_ganhos, resultado } = req.body;
 
-        // Insere o histórico da partida
         await pool.query(
-            'INSERT INTO partidas (usuario_id, palavra_id, pontos_ganhos, resultado) VALUES (?, ?, ?, ?)',
+            'INSERT INTO partidas (usuario_id, palavra_id, pontos_ganhos, resultado) VALUES ($1, $2, $3, $4)',
             [usuario_id, palavra_id, pontos_ganhos, resultado]
         );
 
-        // Atualiza a pontuação total do usuário
         await pool.query(
-            'UPDATE usuarios SET score = score + ? WHERE id = ?',
+            'UPDATE usuarios SET score = score + $1 WHERE id = $2',
             [pontos_ganhos, usuario_id]
         );
 
@@ -89,23 +84,18 @@ app.post('/api/partidas', async (req, res) => {
     }
 });
 
-// 4. Rota para buscar o Ranking (Leaderboard)
+// 4. Rota para Ranking
 app.get('/api/ranking', async (req, res) => {
     try {
-        // Pega os 5 melhores jogadores ordenados pela pontuação
-        const [ranking] = await pool.query('SELECT username, score FROM usuarios ORDER BY score DESC LIMIT 5');
-        res.json(ranking);
+        const ranking = await pool.query('SELECT username, score FROM usuarios ORDER BY score DESC LIMIT 5');
+        res.json(ranking.rows);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Erro ao buscar o ranking' });
     }
 });
 
-// ==========================================
-// INICIANDO O SERVIDOR
-// ==========================================
 const PORT = 6262;
 app.listen(PORT, () => {
     console.log(`Servidor rodando na porta ${PORT}`);
-    console.log(`API de Palavras: http://localhost:${PORT}/api/palavras/aleatoria`);
 });
