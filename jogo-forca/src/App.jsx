@@ -69,7 +69,7 @@ function App() {
   // ==========================================
   const updateLeaderboardUI = async () => {
     try {
-      const response = await fetch(`${API_URL}/ranking`);
+      const response = await fetch(`${API_URL}/api/ranking`);
       if (!response.ok) throw new Error('Erro ao buscar ranking');
       const data = await response.json();
       setLeaderboard(data);
@@ -87,7 +87,7 @@ function App() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/login`, {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username })
@@ -120,7 +120,7 @@ function App() {
     setGameMessage({ text: '', type: '', show: false });
 
     try {
-      const response = await fetch(`${API_URL}/palavras/aleatoria`);
+      const response = await fetch(`${API_URL}/api/palavras/aleatoria`);
       if (!response.ok) throw new Error('Erro ao buscar palavra');
       const wordData = await response.json();
 
@@ -147,7 +147,7 @@ function App() {
     if (!user || !wordId) return;
 
     try {
-      await fetch(`${API_URL}/partidas`, {
+      await fetch(`${API_URL}/api/partidas`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
