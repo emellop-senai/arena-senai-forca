@@ -1,0 +1,431 @@
+/* ==========================================
+   Reset e Variáveis Globais
+   ========================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* O #root abraça a tela toda. No desktop, centraliza e evita scroll */
+#root {
+    min-height: 100vh;
+    display: flex;
+    align-items: center; /* Centraliza verticalmente no desktop */
+    justify-content: center;
+    padding: 1rem;
+}
+
+/* ==========================================
+   Layout do Container Principal
+   ========================================== */
+.container.wide-container {
+    background: white;
+    border-radius: 1rem;
+    padding: 1.5rem 2rem; /* Reduzido para encolher o card */
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 50rem; /* Card um pouco mais estreito */
+    display: flex;
+    flex-direction: row; 
+    gap: 2rem;
+    margin: auto;
+}
+
+/* ==========================================
+   Formulário de Login
+   ========================================== */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 20rem; 
+    margin: 0 auto;   
+    width: 100%;
+}
+
+.login-form input {
+    text-transform: none; 
+}
+
+/* ==========================================
+   Abas (Colunas) e Divisor
+   ========================================== */
+.tab-pane {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+#pane-game {
+    flex: 1.3; 
+}
+
+.desktop-divider {
+    width: 0.125rem;
+    background: #eee;
+    border-radius: 0.125rem;
+}
+
+/* ==========================================
+   Tipografia e Textos
+   ========================================== */
+h1 {
+    text-align: center;
+    color: #667eea;
+    margin-bottom: 0.5rem; /* Margem reduzida */
+    font-size: 1.8rem; /* Fonte menor para caber na tela */
+}
+
+.subtitle {
+    text-align: center;
+    color: #666;
+    margin-bottom: 1rem;
+    font-size: 1rem;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================
+   Elementos do Jogo (Logado)
+   ========================================== */
+.user-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #eef2f7;
+    padding: 0.5rem 0.8rem; /* Mais compacto */
+    border-radius: 0.5rem;
+    margin-bottom: 0.8rem; /* Margem reduzida */
+    font-size: 1rem;
+    color: #333;
+}
+
+.logout-btn {
+    padding: 0.2rem 0.8rem;
+    font-size: 0.85rem;
+    background: #dc3545;
+    color: white;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+}
+
+.logout-btn:hover { background: #c82333; }
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.8rem; /* Margem reduzida */
+    padding: 0.6rem; /* Padding reduzido */
+    background: #f8f9fa;
+    border-radius: 0.5rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #666;
+    margin-bottom: 0.2rem;
+}
+
+.info-value {
+    font-size: 1.3rem; /* Fonte menor */
+    font-weight: bold;
+    color: #667eea;
+}
+
+.hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    text-align: center;
+    padding: 0.6rem; /* Padding reduzido */
+    background: #fff3cd;
+    border-radius: 0.5rem;
+    margin-bottom: 0.8rem; /* Margem reduzida */
+    border-left: 0.25rem solid #ffc107;
+}
+
+.hint-label {
+    font-weight: bold;
+    color: #856404;
+    font-size: 0.9rem;
+}
+
+.hint-text {
+    color: #856404;
+    font-size: 1rem; /* Fonte menor */
+}
+
+/* Caixas das Letras Encolhidas */
+.word-display {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+    flex-wrap: wrap;
+}
+
+.letter-box {
+    width: 2.5rem;  /* Caixinhas menores */
+    height: 3rem;   /* Caixinhas menores */
+    border: 0.15rem solid #667eea;
+    border-radius: 0.4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem; /* Letra um pouco menor */
+    font-weight: bold;
+    color: #667eea;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.letter-box.revealed {
+    background: #667eea;
+    color: white;
+    transform: scale(1.05);
+}
+
+/* Área de Input e Botões */
+.input-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    margin-bottom: 0.5rem;
+    margin-top: auto; 
+}
+
+.input-group {
+    display: flex;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+input {
+    flex: 1; 
+    padding: 0.6rem 0.8rem; /* Input mais baixo */
+    font-size: 1rem;
+    border: 0.125rem solid #ddd;
+    border-radius: 0.4rem;
+    text-transform: uppercase;
+    transition: border-color 0.3s ease;
+    width: 100%;
+}
+
+input:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+button {
+    padding: 0.6rem 1.2rem; /* Botão mais baixo */
+    font-size: 1rem;
+    font-weight: bold;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 0.4rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap; 
+}
+
+button:hover {
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+.new-game-btn {
+    width: max-content; 
+    margin: 0 auto; 
+    background: transparent; 
+    color: #667eea; 
+    border: 2px solid #667eea; 
+    padding: 0.4rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 2rem; 
+    font-weight: 600;
+}
+
+.new-game-btn:hover {
+    background: #f0f4ff; 
+    color: #5568d3;
+    border-color: #5568d3;
+    box-shadow: none; 
+}
+
+/* ==========================================
+   Mensagens e Letras Usadas
+   ========================================== */
+.message {
+    text-align: center;
+    padding: 0.6rem;
+    border-radius: 0.4rem;
+    margin-bottom: 0.8rem;
+    font-weight: bold;
+    display: none;
+    font-size: 0.9rem;
+}
+
+.message.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.message.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+.message.show { display: block; animation: slideIn 0.3s ease; }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.used-letters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    margin-bottom: 0.8rem;
+    text-align: center;
+}
+
+.used-letters-label { font-size: 0.85rem; color: #666; }
+
+.used-letters-list {
+    display: flex;
+    justify-content: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+}
+
+.used-letter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.2rem 0.5rem;
+    background: #f8f9fa;
+    border-radius: 0.3rem;
+    font-weight: bold;
+    color: #721c24;
+    font-size: 0.9rem;
+}
+
+/* ==========================================
+   Leaderboard (Ranking)
+   ========================================== */
+.ranking-title {
+    text-align: center;
+    color: #764ba2;
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+}
+
+.leaderboard-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.leaderboard-list li {
+    display: flex;
+    justify-content: space-between;
+    background: #f8f9fa;
+    padding: 0.7rem;
+    border-radius: 0.5rem;
+    font-weight: bold;
+    color: #444;
+    font-size: 0.95rem;
+}
+
+.leaderboard-list li:nth-child(1) { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+.leaderboard-list li:nth-child(2) { background: #e2e3e5; color: #383d41; }
+.leaderboard-list li:nth-child(3) { background: #d6d8db; color: #856404; }
+
+/* Navegação Mobile Oculta no Desktop */
+.mobile-nav { display: none; }
+
+/* ==========================================
+   MÁGICA DO MOBILE (Telas menores que 900px)
+   ========================================== */
+@media (max-width: 900px) {
+    #root {
+        padding: 1rem;
+        padding-bottom: 6rem; /* Espaço para o menu de baixo não cobrir os botões */
+        align-items: flex-start; /* Libera o scroll vertical apenas no mobile */
+        height: auto;
+    }
+
+    .container.wide-container {
+        flex-direction: column;
+        padding: 1.5rem;
+        gap: 1.5rem;
+        border-radius: 1rem;
+    }
+
+    .desktop-divider { display: none; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: flex; }
+
+    .mobile-nav {
+        display: flex;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 100vw;
+        background: white;
+        box-shadow: 0 -0.25rem 0.625rem rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+    }
+
+    .nav-btn {
+        flex: 1;
+        padding: 1rem;
+        border: none;
+        background: white;
+        color: #999;
+        font-size: 1rem;
+        font-weight: bold;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.2rem;
+    }
+
+    .nav-btn:hover {
+        transform: none;
+        box-shadow: none;
+        background: #fdfdfd;
+    }
+
+    .nav-btn.active {
+        color: #667eea;
+        background: #f8f9fa;
+        border-top: 0.1875rem solid #667eea;
+    }
+}
